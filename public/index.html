@@ -114,7 +114,7 @@
         }
 
         // Realiza a requisição GET
-        fetch(`http://localhost:8080/buscar?nomes=${encodeURIComponent(nome)}`)
+        fetch(`/buscar?nomes=${encodeURIComponent(nome)}`)
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
