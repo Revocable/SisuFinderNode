@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Alunos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1f1f1f;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #ffffff;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 70%;
+            border: 1px solid #555;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #333;
+            color: #e0e0e0;
+        }
+        button {
+            padding: 10px 15px;
+            margin-left: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        .result-card {
+            background-color: #333;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .result-card h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #fff;
+        }
+        .result-card p {
+            margin: 5px 0;
+            color: #ddd;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+        .info {
+            font-size: 14px;
+            color: #bbb;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Busca de Alunos</h1>
+    <div class="input-group">
+        <input type="text" id="nome" placeholder="Digite o nome(s) para buscar" />
+        <button onclick="buscarAluno()">Buscar</button>
+    </div>
+    
+    <div class="info">
+        <p><strong>Para buscar vários nomes, separe-os com ";".</strong></p>
+    </div>
+    
+    <div class="result" id="result"></div>
+    <div class="error" id="error"></div>
+</div>
+
+<script>
+    function buscarAluno() {
+        const nome = document.getElementById('nome').value.trim();
+        const errorDiv = document.getElementById('error');
+        const resultDiv = document.getElementById('result');
+        
+        // Limpar resultados anteriores
+        resultDiv.innerHTML = '';
+        errorDiv.innerHTML = '';
+
+        if (!nome) {
+            errorDiv.textContent = 'Por favor, digite um nome.';
+            return;
+        }
+
+        // Realiza a requisição GET
+        fetch(`http://localhost:8080/buscar?nomes=${encodeURIComponent(nome)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    errorDiv.textContent = data.error;
+                } else if (data.resultados.length === 0) {
+                    errorDiv.textContent = 'Nenhum aluno encontrado com esse nome.';
+                } else {
+                    // Exibe os resultados
+                    data.resultados.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'result-card';
+                        card.innerHTML = `
+                            <h3>${item.nome_aluno}</h3>
+                            <p><strong>Nota:</strong> ${item.nota}</p>
+                            <p><strong>Instituição:</strong> ${item.instituicao}</p>
+                            <p><strong>Curso:</strong> ${item.curso}</p>
+                            <p><strong>Campus:</strong> ${item.no_campus}</p>  <!-- Alterado para exibir "Campus" -->
+                        `;
+                        resultDiv.appendChild(card);
+                    });
+                }
+            })
+            .catch(error => {
+                errorDiv.textContent = 'Ocorreu um erro ao buscar os dados.';
+            });
+    }
+</script>
+
+</body>
+</html>
