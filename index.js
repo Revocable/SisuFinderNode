@@ -34,7 +34,7 @@ async function loadCSV(csvFolder) {
                 .on('data', (line) => {
                     if (line.length > 17) {
                         dados.push({
-                            nota: line[17].trim(),
+                            nota: line[16].trim(), // Atualizando para acessar "NU_NOTA_CANDIDATO" que é a coluna 17 (índice 16)
                             nome_aluno: line[11].trim().toLowerCase(),
                             instituicao: line[1].trim(),
                             curso: line[6].trim(),
